@@ -15,7 +15,7 @@ This Python script extracts frames from a video file and allows you to crop them
 
 Make sure you have the following dependencies installed:
 
-- **Python 3.x**: [Download Python](https://www.python.org/downloads/)
+- **Python 3.10+**: [Download Python](https://www.python.org/downloads/)
 - **OpenCV**: You can install it via pip:
 ```bash
 pip install opencv-python
