@@ -1,7 +1,9 @@
 import os
 import cv2
 import tqdm
+import numpy as np
 from pathlib import Path
+
 
 class Position:
     """
@@ -207,12 +209,7 @@ def draw_grid(new_frame, position: Position, color=(0, 255, 0), thickness=1):
 
     cv2.rectangle(new_frame,
                   (position.x, position.y),
-                  (position.x + position.width, position.y + position.height), color, 2)
-
-
-import cv2
-import numpy as np
-
+                  (position.x + position.width, position.y + position.height), color, thickness + 1)
 
 def zoom_image(image: np.ndarray, x: int, y: int, width: int, height: int, factor: float) -> np.ndarray:
     """
@@ -237,11 +234,7 @@ def zoom_image(image: np.ndarray, x: int, y: int, width: int, height: int, facto
     if cropped.size == 0:
         raise ValueError("The specified area exceeds the image boundaries.")
 
-    # Zoom the image
-    zoomed = cv2.resize(cropped, None, fx=factor, fy=factor, interpolation=cv2.INTER_LINEAR)
-
-    return zoomed
-
+    return cv2.resize(cropped, None, fx=factor, fy=factor, interpolation=cv2.INTER_LINEAR)
 
 
 video_path = get_video_path()
@@ -268,6 +261,8 @@ with tqdm.tqdm(total=frames_count) as pbar:
 
         if skip > 0:
             skip -= 1
+            test = f"frame {pbar.n} of {frames_count}: {name}"
+            cv2.putText(frame, test, (0, 25), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 0, 255), 2)
             cv2.putText(frame, 'SKIPPING', (int(width / 2) - len('SKIPPING') * 15, int(height / 2)),
                         cv2.FONT_HERSHEY_SIMPLEX, 2, (0, 255, 0), 2)
 
@@ -278,18 +273,19 @@ with tqdm.tqdm(total=frames_count) as pbar:
             continue
 
         next_frame_flag = False
-
         while not next_frame_flag:
             new_frame = frame.copy()
-            draw_grid(new_frame, pos)
+            draw_grid(new_frame, pos, thickness=1 + int(max(width, height) / 1000))
             test = f"frame {pbar.n} of {frames_count}: {name}"
             cv2.putText(new_frame, test, (0, 25), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 0, 255), 2)
 
             cv2.imshow('frame', new_frame)
 
             if is_zoom:
-                cv2.imshow('zoomed_area',
-                           zoom_image(image=frame, x=pos.x, y=pos.y, width=pos.width, height=pos.height, factor=3))
+                zoomed = zoom_image(image=frame, x=pos.x, y=pos.y, width=pos.width, height=pos.height, factor=3)
+                test = f"frame {pbar.n} of {frames_count}: {name}"
+                cv2.putText(zoomed, test, (0, 25), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 0, 255), 2)
+                cv2.imshow('zoomed_area', zoomed)
             else:
                 cv2.destroyWindow('zoomed_area')
 
@@ -311,10 +307,12 @@ with tqdm.tqdm(total=frames_count) as pbar:
                     is_zoom = not is_zoom
                 case _ if key == ord(' '):
                     next_frame_flag = True
+                case _ if key == ord('q'):
+                    exit()
         pbar.update(1)
 cap.release()
 cv2.destroyAllWindows()
 
 
-# /Users/stepanborodin/Desktop/Projects/Yan/YanDrone/pythonProject/videos/Гоночки.mp4
+# /Users/stepanborodin/Desktop/Projects/Yan/YanDrone/pythonProject/videos/IMG_8444.MOV
 # /Users/stepanborodin/Desktop/Projects/Yan/YanDrone/pythonProject/drones

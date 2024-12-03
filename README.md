@@ -24,17 +24,18 @@ pip install opencv-python
 ```bash
 pip install tqdm
 ```
+- **opencv**: You can install it via pip:
 ```bash
-pip install opencv-python tqdm
+pip install opencv-python
 ```
 
 ## Usage
 
 1. **Run the script** by executing the following command in your terminal:
 
-   ```bash
-   python video_frame_extractor.py
-   ```
+```bash
+python video_frame_extractor.py
+```
 
 2. **Provide the video path**: When prompted, enter the full path to the video file you want to process.
 
