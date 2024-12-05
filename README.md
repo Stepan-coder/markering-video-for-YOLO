@@ -74,3 +74,5 @@ If you'd like to contribute to this project, feel free to fork the repository an
 ```
 This project is licensed under the MIT License.
 ```
+
+python train.py --img 925 --batch 8 --epochs 5 --data /Users/stepanborodin/Desktop/Projects/Yan/YanDrone/pythonProject/dataset/data.yaml --weights yolov5l.pt  --nosave --cache
