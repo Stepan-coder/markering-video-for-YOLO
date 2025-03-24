@@ -1,7 +1,7 @@
 import unittest
 from unittest import mock
 from ddt import ddt, data, unpack
-from making_YOLO_dataset import Position, get_video_path, get_folder_to_save, \
+from making_YOLO_dataset import FrameArea, get_video_path, get_folder_to_save, \
     get_screen_resolution  # Импортируйте ваши функции и классы
 
 
@@ -11,39 +11,39 @@ class TestPosition(unittest.TestCase):
     @data((640, 480), (800, 600), (1024, 768))
     @unpack
     def test_calculate_center(self, width, height):
-        pos = Position()
-        pos.update_position(10, 20, width, height)
-        center_x, center_y = pos.calculate_center()
+        area = FrameArea()
+        area.update_position(10, 20, width, height)
+        center_x, center_y = area.get_center()
         self.assertEqual(center_x, 10 + width // 2)
         self.assertEqual(center_y, 20 + height // 2)
 
     @data(-1.0, "1", None, [], ["hi"], (), ("hi",), set(), {"hi"}, 1 + 2j, b"",
           b"hi", bytearray(b""), bytearray(b"hi"), range(0), )
     def test_x_setter_type_error(self, value):
-        pos = Position()
+        area = FrameArea()
         with self.assertRaises(TypeError):
-            pos.x = value
+            area.x = value
 
     @data(-1.0, "1", None, [], ["hi"], (), ("hi",), set(), {"hi"}, 1 + 2j, b"",
           b"hi", bytearray(b""), bytearray(b"hi"), range(0), )
     def test_x_setter_type_error(self, value):
-        pos = Position()
+        area = FrameArea()
         with self.assertRaises(TypeError):
-            pos.y = value
+            area.y = value
 
     @data(-1.0, "1", None, [], ["hi"], (), ("hi",), set(), {"hi"}, 1 + 2j, b"",
           b"hi", bytearray(b""), bytearray(b"hi"), range(0), )
     def test_width_setter_type_error(self, value):
-        pos = Position()
+        area = FrameArea()
         with self.assertRaises(TypeError):
-            pos.width = "string"
+            area.width = "string"
 
     @data(-1.0, "1", None, [], ["hi"], (), ("hi",), set(), {"hi"}, 1 + 2j, b"",
           b"hi", bytearray(b""), bytearray(b"hi"), range(0), )
     def test_width_setter_type_error(self, value):
-        pos = Position()
+        area = FrameArea()
         with self.assertRaises(TypeError):
-            pos.height = value
+            area.height = value
 
     @data(
         (5, 10, 100, 200),      # Обычные значения
@@ -52,12 +52,12 @@ class TestPosition(unittest.TestCase):
     )
     @unpack
     def test_update_position(self, x, y, width, height):
-        pos = Position()
-        pos.update_position(x, y, width, height)
-        self.assertEqual(pos.x, x)
-        self.assertEqual(pos.y, y)
-        self.assertEqual(pos.width, width)
-        self.assertEqual(pos.height, height)
+        area = FrameArea()
+        area.update_position(x, y, width, height)
+        self.assertEqual(area.x, x)
+        self.assertEqual(area.y, y)
+        self.assertEqual(area.width, width)
+        self.assertEqual(area.height, height)
 
 
 @ddt

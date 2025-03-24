@@ -2,148 +2,9 @@ import os
 import cv2
 import tqdm
 import numpy as np
+from frame_area import FrameArea
 from pathlib import Path
 from typing import Tuple
-
-class Position:
-    """
-    Class to represent the position and dimensions of a rectangular area.
-
-    Attributes:
-        devider (int): Number of divisions for the grid.
-        x (int): X-coordinate of the top-left corner of the rectangle.
-        y (int): Y-coordinate of the top-left corner of the rectangle.
-        width (int): Width of the rectangle.
-        height (int): Height of the rectangle.
-    """
-
-    def __init__(self, devider: int = 1):
-        """
-        Initializes the Position with a given divider.
-
-        Args:
-            devider (int): The number of divisions for the grid, default is 1.
-        """
-        self._devider = devider
-        self._x = 0
-        self._y = 0
-        self._width = 0
-        self._height = 0
-
-    @property
-    def devider(self) -> int:
-        """Get the number of divisions for the grid."""
-        return self._devider
-
-    @property
-    def x_step(self) -> int:
-        """Calculate the step size for the x-axis based on width and devider."""
-        return int(self.width / self.devider)
-
-    @property
-    def y_step(self) -> int:
-        """Calculate the step size for the y-axis based on height and devider."""
-        return int(self.height / self.devider)
-
-    @property
-    def x(self) -> int:
-        """Get the x-coordinate."""
-        return self._x
-
-    @x.setter
-    def x(self, x: int) -> None:
-        """
-        Set the x-coordinate.
-
-        Args:
-            x (int): The new x-coordinate to set.
-        """
-        if not isinstance(x, int):
-            raise TypeError(f"'x' must be 'int', but got {type(x).__name__}")
-        if x < 0:
-            raise ValueError(f"field 'x' should be greater than or equal to zero, but got {x}")
-        self._x = x
-
-    @property
-    def y(self) -> int:
-        """Get the y-coordinate."""
-        return self._y
-
-    @y.setter
-    def y(self, y: int) -> None:
-        """
-        Set the y-coordinate.
-
-        Args:
-            y (int): The new y-coordinate to set.
-        """
-        if not isinstance(y, int):
-            raise TypeError(f"'y' must be 'int', but got {type(y).__name__}")
-        if y < 0:
-            raise ValueError(f"field 'y' should be greater than or equal to zero, but got {y}")
-        self._y = y
-
-    @property
-    def width(self) -> int:
-        """Get the width of the rectangle."""
-        return self._width
-
-    @width.setter
-    def width(self, width: int) -> None:
-        """
-        Set the width of the rectangle.
-
-        Args:
-            width (int): The new width to set.
-        """
-        if not isinstance(width, int):
-            raise TypeError(f"'width' must be 'int', but got {type(width).__name__}")
-        if width < 0:
-            raise ValueError(f"field 'width' should be greater than or equal to zero, but got {width}")
-        self._width = width
-
-    @property
-    def height(self) -> int:
-        """Get the height of the rectangle."""
-        return self._height
-
-    @height.setter
-    def height(self, height: int) -> None:
-        """
-        Set the height of the rectangle.
-
-        Args:
-            height (int): The new height to set.
-        """
-        if not isinstance(height, int):
-            raise TypeError(f"'height' must be 'int', but got {type(height).__name__}")
-        if height < 0:
-            raise ValueError(f"field 'height' should be greater than or equal to zero, but got {height}")
-        self._height = height
-
-    def update_position(self, x: int, y: int, width: int, height: int) -> None:
-        """
-        Update the position's attributes.
-
-        Args:
-            x (int): The new x-coordinate.
-            y (int): The new y-coordinate.
-            width (int): The new width.
-            height (int): The new height.
-        """
-        self.x = x
-        self.y = y
-        self.width = width
-        self.height = height
-
-    def calculate_center(self) -> Tuple[int, int]:
-        """
-        Calculate the center point of the rectangle.
-
-        Returns:
-            Tuple[int, int]: The x and y coordinates of the center point.
-        """
-        return self.x + self.width // 2, self.y + self.height // 2
 
 
 def get_video_path() -> os.PathLike:
@@ -221,17 +82,17 @@ def get_screen_resolution() -> Tuple[int, int]:
         ValueError: If the input resolution is less than or equal to 640 for width
                      or height or if the input format is incorrect.
     """
-    screen = input("Enter the resolution of your screen in the format WxH, for example, 1920x1080: ").lower().strip()
-    screen_width = int(screen.split('x')[0])
-    screen_height = int(screen.split('x')[1])
-    if screen_width <= 640:
+    resolution = input("Enter the resolution of your screen in the format WxH, for example, 1920x1080: ").lower().strip()
+    width = int(resolution.split('x')[0])
+    height = int(resolution.split('x')[1])
+    if width <= 640:
         raise ValueError("The width value must be greater than 640.")
-    if screen_height <= 640:
+    if height <= 640:
         raise ValueError("The height value must be greater than 640.")
-    return screen_width, screen_height
+    return width, height
 
 
-def draw_grid(new_frame: np.ndarray, position: Position, color=(0, 255, 0), thickness: int = 1, k: float = 1.0):
+def draw_grid(new_frame: np.ndarray, position: FrameArea, color=(0, 255, 0), thickness: int = 1, k: float = 1.0):
     """
     Draw a grid on the provided frame.
 
@@ -242,14 +103,14 @@ def draw_grid(new_frame: np.ndarray, position: Position, color=(0, 255, 0), thic
         thickness (int): Thickness of the grid lines (default is 1).
         k (float): Scaling factor for the grid size (default is 1.0).
     """
-    for i in range(position.devider + 1):  # +1 for the boundary
+    for i in range(position.divider + 1):  # +1 for the boundary
         y = int(position.y * k + position.y_step * k * i)
         cv2.line(new_frame,
                  (int(position.x * k), y),
                  (int(position.x * k + position.width * k), y),
                  color, thickness)
 
-    for i in range(position.devider + 1):  # +1 for the boundary
+    for i in range(position.divider + 1):  # +1 for the boundary
         x = int(position.x * k + position.x_step * k * i)
         cv2.line(new_frame,
                  (x, int(position.y * k)),
@@ -312,9 +173,9 @@ def crop_image_to_screen_size(frame: np.ndarray, to_width: int, to_height: int) 
     return frame, frame.shape[0], frame.shape[1]
 
 
-pos = Position(3)
-pos.height = 640
-pos.width = 640
+area = FrameArea(divider=3)
+area.height = 640
+area.width = 640
 is_zoom = False
 
 video_path = get_video_path()
@@ -329,11 +190,9 @@ with tqdm.tqdm(total=frames_count) as pbar:
     while cap.isOpened():
         ret, frame = cap.read()
 
-        # sub_frame, height, width = frame.copy(), frame.shape[0], frame.shape[1]
-
         sub_frame, height, width = crop_image_to_screen_size(frame=frame.copy(),
-                                                           to_width=screen_width,
-                                                           to_height=screen_height)
+                                                             to_width=screen_width,
+                                                             to_height=screen_height)
 
         if skip > 0:
             skip -= 1
@@ -351,14 +210,14 @@ with tqdm.tqdm(total=frames_count) as pbar:
         next_frame_flag = False
         while not next_frame_flag:
             new_frame = sub_frame.copy()
-            draw_grid(new_frame, pos, thickness=1 + int(max(width, height) / 1000), k=width/frame.shape[1])
+            draw_grid(new_frame, area, thickness=1 + int(max(width, height) / 1000), k=width/frame.shape[1])
             test = f"frame {pbar.n} of {frames_count}: {name}"
             cv2.putText(new_frame, test, (0, 25), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 0, 255), 2)
 
             cv2.imshow('frame', new_frame)
 
             if is_zoom:
-                zoomed = zoom_image(image=frame, x=pos.x, y=pos.y, width=pos.width, height=pos.height, factor=3)
+                zoomed = zoom_image(image=frame, x=area.x, y=area.y, width=area.width, height=area.height, factor=3)
                 test = f"frame {pbar.n} of {frames_count}: {name}"
                 cv2.putText(zoomed, test, (0, 25), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 0, 255), 2)
                 cv2.imshow('zoomed_area', zoomed)
@@ -371,15 +230,15 @@ with tqdm.tqdm(total=frames_count) as pbar:
             key = cv2.waitKey(0)
             match key:
                 case _ if key == ord('a'):
-                    pos.x = max(0, pos.x - pos.x_step)
+                    area.x = max(0, area.x - area.x_step)
                 case _ if key == ord('d'):
-                    pos.x = min(frame.shape[1] - pos.width, pos.x + pos.x_step)
+                    area.x = min(frame.shape[1] - area.width, area.x + area.x_step)
                 case _ if key == ord('w'):
-                    pos.y = max(0, pos.y - pos.y_step)
+                    area.y = max(0, area.y - area.y_step)
                 case _ if key == ord('s'):
-                    pos.y = min(frame.shape[0] - pos.height, pos.y + pos.y_step)
+                    area.y = min(frame.shape[0] - area.height, area.y + area.y_step)
                 case _ if key == ord('k'):
-                    cropped_image = frame[pos.y: pos.y + pos.height, pos.x: pos.x + pos.width]
+                    cropped_image = frame[area.y: area.y + area.height, area.x: area.x + area.width]
                     cv2.imwrite(f"{name.split(' ')[0]}_{pbar.n}.png", cropped_image)
                 case _ if key == ord('z'):
                     is_zoom = not is_zoom

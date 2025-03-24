@@ -34,7 +34,7 @@ pip install opencv-python
 1. **Run the script** by executing the following command in your terminal:
 
 ```bash
-python video_frame_extractor.py
+python3.1x making_YOLO_dataset.py
 ```
 
 2. **Provide the video path**: When prompted, enter the full path to the video file you want to process.
