@@ -311,82 +311,82 @@ def crop_image_to_screen_size(frame: np.ndarray, to_width: int, to_height: int) 
                            interpolation=cv2.INTER_LINEAR)
     return frame, frame.shape[0], frame.shape[1]
 
-#
-# pos = Position(3)
-# pos.height = 640
-# pos.width = 640
-# is_zoom = False
-#
-# video_path = get_video_path()
-# folder = get_folder_to_save()
-# screen_width, screen_height = get_screen_resolution()
-#
-# cap = cv2.VideoCapture(video_path)
-# name = Path(video_path).name
-# frames_count = int(cap.get(cv2.CAP_PROP_FRAME_COUNT))
-# skip = get_count_to_skip(max_frames=frames_count)
-# with tqdm.tqdm(total=frames_count) as pbar:
-#     while cap.isOpened():
-#         ret, frame = cap.read()
-#
-#         # sub_frame, height, width = frame.copy(), frame.shape[0], frame.shape[1]
-#
-#         sub_frame, height, width = crop_image_to_screen_size(frame=frame.copy(),
-#                                                            to_width=screen_width,
-#                                                            to_height=screen_height)
-#
-#         if skip > 0:
-#             skip -= 1
-#             test = f"frame {pbar.n} of {frames_count}: {name}"
-#             cv2.putText(sub_frame, test, (0, 25), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 0, 255), 2)
-#             cv2.putText(sub_frame, 'SKIPPING', (int(width / 2) - len('SKIPPING') * 15, int(height / 2)),
-#                         cv2.FONT_HERSHEY_SIMPLEX, 2, (0, 255, 0), 2)
-#
-#             cv2.imshow('frame', sub_frame)
-#             if cv2.waitKey(1) == ord('q'):
-#                 break
-#             pbar.update(1)
-#             continue
-#
-#         next_frame_flag = False
-#         while not next_frame_flag:
-#             new_frame = sub_frame.copy()
-#             draw_grid(new_frame, pos, thickness=1 + int(max(width, height) / 1000), k=width/frame.shape[1])
-#             test = f"frame {pbar.n} of {frames_count}: {name}"
-#             cv2.putText(new_frame, test, (0, 25), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 0, 255), 2)
-#
-#             cv2.imshow('frame', new_frame)
-#
-#             if is_zoom:
-#                 zoomed = zoom_image(image=frame, x=pos.x, y=pos.y, width=pos.width, height=pos.height, factor=3)
-#                 test = f"frame {pbar.n} of {frames_count}: {name}"
-#                 cv2.putText(zoomed, test, (0, 25), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 0, 255), 2)
-#                 cv2.imshow('zoomed_area', zoomed)
-#             else:
-#                 try:
-#                     cv2.destroyWindow('zoomed_area')
-#                 except:
-#                     pass
-#
-#             key = cv2.waitKey(0)
-#             match key:
-#                 case _ if key == ord('a'):
-#                     pos.x = max(0, pos.x - pos.x_step)
-#                 case _ if key == ord('d'):
-#                     pos.x = min(frame.shape[1] - pos.width, pos.x + pos.x_step)
-#                 case _ if key == ord('w'):
-#                     pos.y = max(0, pos.y - pos.y_step)
-#                 case _ if key == ord('s'):
-#                     pos.y = min(frame.shape[0] - pos.height, pos.y + pos.y_step)
-#                 case _ if key == ord('k'):
-#                     cropped_image = frame[pos.y: pos.y + pos.height, pos.x: pos.x + pos.width]
-#                     cv2.imwrite(f"{name.split(' ')[0]}_{pbar.n}.png", cropped_image)
-#                 case _ if key == ord('z'):
-#                     is_zoom = not is_zoom
-#                 case _ if key == ord(' '):
-#                     next_frame_flag = True
-#                 case _ if key == ord('q'):
-#                     exit()
-#         pbar.update(1)
-# cap.release()
-# cv2.destroyAllWindows()
+
+pos = Position(3)
+pos.height = 640
+pos.width = 640
+is_zoom = False
+
+video_path = get_video_path()
+folder = get_folder_to_save()
+screen_width, screen_height = get_screen_resolution()
+
+cap = cv2.VideoCapture(video_path)
+name = Path(video_path).name
+frames_count = int(cap.get(cv2.CAP_PROP_FRAME_COUNT))
+skip = get_count_to_skip(max_frames=frames_count)
+with tqdm.tqdm(total=frames_count) as pbar:
+    while cap.isOpened():
+        ret, frame = cap.read()
+
+        # sub_frame, height, width = frame.copy(), frame.shape[0], frame.shape[1]
+
+        sub_frame, height, width = crop_image_to_screen_size(frame=frame.copy(),
+                                                           to_width=screen_width,
+                                                           to_height=screen_height)
+
+        if skip > 0:
+            skip -= 1
+            test = f"frame {pbar.n} of {frames_count}: {name}"
+            cv2.putText(sub_frame, test, (0, 25), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 0, 255), 2)
+            cv2.putText(sub_frame, 'SKIPPING', (int(width / 2) - len('SKIPPING') * 15, int(height / 2)),
+                        cv2.FONT_HERSHEY_SIMPLEX, 2, (0, 255, 0), 2)
+
+            cv2.imshow('frame', sub_frame)
+            if cv2.waitKey(1) == ord('q'):
+                break
+            pbar.update(1)
+            continue
+
+        next_frame_flag = False
+        while not next_frame_flag:
+            new_frame = sub_frame.copy()
+            draw_grid(new_frame, pos, thickness=1 + int(max(width, height) / 1000), k=width/frame.shape[1])
+            test = f"frame {pbar.n} of {frames_count}: {name}"
+            cv2.putText(new_frame, test, (0, 25), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 0, 255), 2)
+
+            cv2.imshow('frame', new_frame)
+
+            if is_zoom:
+                zoomed = zoom_image(image=frame, x=pos.x, y=pos.y, width=pos.width, height=pos.height, factor=3)
+                test = f"frame {pbar.n} of {frames_count}: {name}"
+                cv2.putText(zoomed, test, (0, 25), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 0, 255), 2)
+                cv2.imshow('zoomed_area', zoomed)
+            else:
+                try:
+                    cv2.destroyWindow('zoomed_area')
+                except:
+                    pass
+
+            key = cv2.waitKey(0)
+            match key:
+                case _ if key == ord('a'):
+                    pos.x = max(0, pos.x - pos.x_step)
+                case _ if key == ord('d'):
+                    pos.x = min(frame.shape[1] - pos.width, pos.x + pos.x_step)
+                case _ if key == ord('w'):
+                    pos.y = max(0, pos.y - pos.y_step)
+                case _ if key == ord('s'):
+                    pos.y = min(frame.shape[0] - pos.height, pos.y + pos.y_step)
+                case _ if key == ord('k'):
+                    cropped_image = frame[pos.y: pos.y + pos.height, pos.x: pos.x + pos.width]
+                    cv2.imwrite(f"{name.split(' ')[0]}_{pbar.n}.png", cropped_image)
+                case _ if key == ord('z'):
+                    is_zoom = not is_zoom
+                case _ if key == ord(' '):
+                    next_frame_flag = True
+                case _ if key == ord('q'):
+                    exit()
+        pbar.update(1)
+cap.release()
+cv2.destroyAllWindows()
