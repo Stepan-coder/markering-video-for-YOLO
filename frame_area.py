@@ -6,7 +6,7 @@ class FrameArea:
     Class to represent the position and dimensions of a rectangular area.
 
     Attributes:
-        devider (int): Number of divisions for the grid.
+        divider (int): Number of divisions for the grid.
         x (int): X-coordinate of the top-left corner of the rectangle.
         y (int): Y-coordinate of the top-left corner of the rectangle.
         width (int): Width of the rectangle.
@@ -15,7 +15,7 @@ class FrameArea:
 
     def __init__(self, divider: int = 1):
         """
-        Initializes the Position with a given divider.
+        Initializes the FrameArea instance with a given divider.
 
         Args:
             divider (int): The number of divisions for the grid, default is 1.
@@ -28,13 +28,13 @@ class FrameArea:
 
     @property
     def x(self) -> int:
-        """Get the x-coordinate."""
+        """Get the x-coordinate of the rectangle."""
         return self._x
 
     @x.setter
     def x(self, x: int) -> None:
         """
-        Set the x-coordinate.
+        Set the x-coordinate of the rectangle.
 
         Args:
             x (int): The new x-coordinate to set.
@@ -42,18 +42,18 @@ class FrameArea:
         if not isinstance(x, int):
             raise TypeError(f"'x' must be 'int', but got {type(x).__name__}")
         if x < 0:
-            raise ValueError(f"field 'x' should be greater than or equal to zero, but got {x}")
+            raise ValueError(f"Field 'x' should be greater than or equal to zero, but got {x}")
         self._x = x
 
     @property
     def y(self) -> int:
-        """Get the y-coordinate."""
+        """Get the y-coordinate of the rectangle."""
         return self._y
 
     @y.setter
     def y(self, y: int) -> None:
         """
-        Set the y-coordinate.
+        Set the y-coordinate of the rectangle.
 
         Args:
             y (int): The new y-coordinate to set.
@@ -61,7 +61,7 @@ class FrameArea:
         if not isinstance(y, int):
             raise TypeError(f"'y' must be 'int', but got {type(y).__name__}")
         if y < 0:
-            raise ValueError(f"field 'y' should be greater than or equal to zero, but got {y}")
+            raise ValueError(f"Field 'y' should be greater than or equal to zero, but got {y}")
         self._y = y
 
     @property
@@ -80,7 +80,7 @@ class FrameArea:
         if not isinstance(width, int):
             raise TypeError(f"'width' must be 'int', but got {type(width).__name__}")
         if width < 0:
-            raise ValueError(f"field 'width' should be greater than or equal to zero, but got {width}")
+            raise ValueError(f"Field 'width' should be greater than or equal to zero, but got {width}")
         self._width = width
 
     @property
@@ -99,7 +99,7 @@ class FrameArea:
         if not isinstance(height, int):
             raise TypeError(f"'height' must be 'int', but got {type(height).__name__}")
         if height < 0:
-            raise ValueError(f"field 'height' should be greater than or equal to zero, but got {height}")
+            raise ValueError(f"Field 'height' should be greater than or equal to zero, but got {height}")
         self._height = height
 
     @property
@@ -109,21 +109,26 @@ class FrameArea:
 
     @divider.setter
     def divider(self, divider: int) -> None:
-        """Get the number of divisions for the grid."""
+        """
+        Set the number of divisions for the grid.
+
+        Args:
+            divider (int): The new number of divisions to set.
+        """
         if not isinstance(divider, int):
             raise TypeError(f"'divider' must be 'int', but got {type(divider).__name__}")
         if divider < 0:
-            raise ValueError(f"field 'divider' should be greater than or equal to zero, but got {divider}")
+            raise ValueError(f"Field 'divider' should be greater than or equal to zero, but got {divider}")
         self._divider = divider
 
     @property
     def x_step(self) -> int:
-        """Calculate the step size for the x-axis based on width and devider."""
+        """Calculate the step size for the x-axis based on width and divider."""
         return int(self.width / self.divider)
 
     @property
     def y_step(self) -> int:
-        """Calculate the step size for the y-axis based on height and devider."""
+        """Calculate the step size for the y-axis based on height and divider."""
         return int(self.height / self.divider)
 
     def get_center(self) -> Tuple[int, int]:
@@ -149,4 +154,3 @@ class FrameArea:
         self.y = y
         self.width = width
         self.height = height
-
